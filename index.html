@@ -5,22 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Joel and the Chatty Bird – Reader</title>
   <style>
-    body { margin:0; padding:0; background:#fdfdfd; display:flex; flex-direction:column; align-items:center; }
-    .reader { width:100%; max-width:800px; position:relative; }
-    .reader img { width:100%; height:auto; display:block; }
-    .nav { position:absolute; top:50%; width:100%; display:flex; justify-content:space-between; transform:translateY(-50%); }
-    .nav button {
-      background:rgba(0,0,0,0.5);
-      border:none;
-      color:#fff;
-      font-size:2rem;
-      padding:0.5rem 1rem;
-      opacity:0.7;
-      cursor:pointer;
-      transition:opacity 0.2s ease;
+    body {
+      margin: 0;
+      padding: 0;
+      background: #eaeaea; /* light grey background */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: sans-serif;
     }
-    .nav button:hover { opacity:1; }
-    .footer { margin-top:10px; font-family:sans-serif; color:#555; }
+    .reader {
+      width: 100%;
+      max-width: 800px;
+      position: relative;
+    }
+    .reader img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .flip-left {
+      transform: rotateY(-180deg);
+    }
+    .flip-right {
+      transform: rotateY(180deg);
+    }
+    .nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+    .nav button {
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      opacity: 0.7;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+    .nav button:hover {
+      opacity: 1;
+    }
+    .footer {
+      margin-top: 10px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -42,7 +77,12 @@
     const pageNumEl = document.getElementById('pageNum');
     const pageTotalEl = document.getElementById('pageTotal');
 
-    function updateReader() {
+    function updateReader(direction) {
+      imgEl.classList.remove('flip-left', 'flip-right');
+      void imgEl.offsetWidth; // trigger reflow
+      if (direction === 'next') imgEl.classList.add('flip-right');
+      if (direction === 'prev') imgEl.classList.add('flip-left');
+
       imgEl.src = `page${currentPage}.jpg`;
       imgEl.alt = `Page ${currentPage}`;
       pageNumEl.textContent = currentPage;
@@ -51,14 +91,14 @@
     document.getElementById('prevBtn').addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
-        updateReader();
+        updateReader('prev');
       }
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
       if (currentPage < totalPages) {
         currentPage++;
-        updateReader();
+        updateReader('next');
       }
     });
 
@@ -67,7 +107,7 @@
       if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
     });
 
-    updateReader(); // Initial render
+    updateReader();
   </script>
 </body>
 </html>
