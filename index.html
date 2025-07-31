@@ -8,36 +8,40 @@
     body {
       margin: 0;
       padding: 0;
-      background: #ccc; /* medium grey background */
+      background: #ccc;
       display: flex;
       flex-direction: column;
       align-items: center;
       font-family: sans-serif;
+      min-height: 100vh;
     }
     .reader {
       width: 100%;
       max-width: 800px;
       position: relative;
-      perspective: 2000px;
+      margin-top: 60px;
     }
     .page {
       width: 100%;
-      transform-style: preserve-3d;
       transition: transform 0.8s ease;
-      backface-visibility: hidden;
-      position: absolute;
     }
-    .flip {
-      transform: rotateY(180deg);
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .fade-in {
+      opacity: 1;
+      transition: opacity 0.4s ease;
     }
     .nav {
-      position: absolute;
+      position: fixed;
       top: 50%;
       width: 100%;
+      max-width: 800px;
       display: flex;
       justify-content: space-between;
       transform: translateY(-50%);
-      z-index: 2;
+      z-index: 10;
     }
     .nav button {
       background: rgba(0, 0, 0, 0.5);
@@ -53,7 +57,7 @@
       opacity: 1;
     }
     .footer {
-      margin-top: 10px;
+      margin-top: 20px;
       color: #555;
     }
   </style>
@@ -64,7 +68,7 @@
       <button id="prevBtn">&#10094;</button>
       <button id="nextBtn">&#10095;</button>
     </div>
-    <img id="pageImg" class="page" src="page1.jpg" alt="Page 1" />
+    <img id="pageImg" class="page fade-in" src="page1.jpg" alt="Page 1" />
   </div>
   <div class="footer">
     <span id="pageNum">1</span> / <span id="pageTotal">31</span>
@@ -78,14 +82,15 @@
     const pageTotalEl = document.getElementById('pageTotal');
 
     function updateReader(direction) {
-      imgEl.classList.remove('flip');
-      void imgEl.offsetWidth; // trigger reflow
-      if (direction === 'next') imgEl.classList.add('flip');
+      imgEl.classList.remove('fade-in');
+      imgEl.classList.add('fade-out');
 
       setTimeout(() => {
         imgEl.src = `page${currentPage}.jpg`;
         imgEl.alt = `Page ${currentPage}`;
         pageNumEl.textContent = currentPage;
+        imgEl.classList.remove('fade-out');
+        imgEl.classList.add('fade-in');
       }, 400);
     }
 
