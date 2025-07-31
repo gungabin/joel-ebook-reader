@@ -18,18 +18,17 @@
       width: 100%;
       max-width: 800px;
       position: relative;
+      perspective: 2000px;
     }
-    .reader img {
+    .page {
       width: 100%;
-      height: auto;
-      display: block;
-      transition: opacity 0.6s ease;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease;
+      backface-visibility: hidden;
+      position: absolute;
     }
-    .fade-out {
-      opacity: 0;
-    }
-    .fade-in {
-      opacity: 1;
+    .flip {
+      transform: rotateY(180deg);
     }
     .nav {
       position: absolute;
@@ -38,6 +37,7 @@
       display: flex;
       justify-content: space-between;
       transform: translateY(-50%);
+      z-index: 2;
     }
     .nav button {
       background: rgba(0, 0, 0, 0.5);
@@ -48,7 +48,6 @@
       opacity: 0.7;
       cursor: pointer;
       transition: opacity 0.2s ease;
-      z-index: 2;
     }
     .nav button:hover {
       opacity: 1;
@@ -65,7 +64,7 @@
       <button id="prevBtn">&#10094;</button>
       <button id="nextBtn">&#10095;</button>
     </div>
-    <img id="pageImg" src="page1.jpg" alt="Page 1" class="fade-in" />
+    <img id="pageImg" class="page" src="page1.jpg" alt="Page 1" />
   </div>
   <div class="footer">
     <span id="pageNum">1</span> / <span id="pageTotal">31</span>
@@ -78,30 +77,29 @@
     const pageNumEl = document.getElementById('pageNum');
     const pageTotalEl = document.getElementById('pageTotal');
 
-    function updateReader() {
-      imgEl.classList.remove('fade-in');
-      imgEl.classList.add('fade-out');
+    function updateReader(direction) {
+      imgEl.classList.remove('flip');
+      void imgEl.offsetWidth; // trigger reflow
+      if (direction === 'next') imgEl.classList.add('flip');
 
       setTimeout(() => {
         imgEl.src = `page${currentPage}.jpg`;
         imgEl.alt = `Page ${currentPage}`;
         pageNumEl.textContent = currentPage;
-        imgEl.classList.remove('fade-out');
-        imgEl.classList.add('fade-in');
-      }, 300);
+      }, 400);
     }
 
     document.getElementById('prevBtn').addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--;
-        updateReader();
+        updateReader('prev');
       }
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
       if (currentPage < totalPages) {
         currentPage++;
-        updateReader();
+        updateReader('next');
       }
     });
 
